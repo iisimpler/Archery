@@ -314,6 +314,7 @@ if ENABLE_OIDC:
     )  # 例如 https://keycloak.example.com/realms/<your realm>/.well-known/openid-configuration
     OIDC_RP_CLIENT_ID = env("OIDC_RP_CLIENT_ID")
     OIDC_RP_CLIENT_SECRET = env("OIDC_RP_CLIENT_SECRET")
+    OIDC_AUTH_REQUEST_EXTRA_PARAMS = env.json("OIDC_AUTH_REQUEST_EXTRA_PARAMS", default={})
 
     response = requests.get(OIDC_RP_WELLKNOWN_URL)
     response.raise_for_status()
