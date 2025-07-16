@@ -1,0 +1,34 @@
+services:
+  goinception:
+    image: iisimpler/goinception:v1.3.0
+    container_name: goinception
+    restart: always
+    ports:
+      - "4000:4000"
+    volumes:
+      - "./docker/config.toml:/etc/config.toml"
+
+  archery:
+    image: iisimpler/archery:v1.3.0
+    container_name: archery
+    restart: always
+    depends_on:
+      - goinception
+    ports:
+      - "8888:8888"
+    volumes:
+      - .env:/opt/archery/.env
+      - "./logs:/opt/archery/logs"
+#      - "./config:/opt/archery/conf"
+#      - "./downloads:/opt/archery/downloads"
+#      - "./keys:/opt/archery/keys"
+    environment:
+      - GUNICORN_WORKERS=4
+      - GUNICORN_TIMEOUT=600
+      - GUNICORN_BIND=0.0.0.0:8888
+      - TZ=Asia/Shanghai
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3 
