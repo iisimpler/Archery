@@ -16,7 +16,9 @@ env
 sonar-project.properties
 .scannerwork
 .env
+.env_docker
 local_settings.py
 src/docker-compose-dev
 .coverage
 archery_custom
+downloads

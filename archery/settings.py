@@ -85,8 +85,10 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 # https://docs.djangoproject.com/en/4.0/ref/settings/#csrf-trusted-origins
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
 
-# 解决nginx部署跳转404
+# nginx完整代理支持配置
 USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True  # 支持代理端口
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # 支持HTTPS代理
 
 # 请求限制
 DATA_UPLOAD_MAX_MEMORY_SIZE = 15728640
@@ -134,13 +136,14 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE = (
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # 静态文件处理
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "common.middleware.check_login_middleware.CheckLoginMiddleware",
     "common.middleware.exception_logging_middleware.ExceptionLoggingMiddleware",
@@ -187,7 +190,30 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "common/static"),
 ]
-STATICFILES_STORAGE = "common.storage.ForgivingManifestStaticFilesStorage"
+# WhiteNoise - 高性能静态文件处理
+# 根据环境动态调整配置
+if DEBUG:
+    # 开发环境：便于调试，短缓存，支持动态查找
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+    WHITENOISE_USE_FINDERS = True  # 支持开发时动态查找静态文件
+    WHITENOISE_MAX_AGE = 60  # 短缓存，便于开发调试
+    WHITENOISE_AUTOREFRESH = True  # 开发时自动刷新
+else:
+    # 生产环境：性能优化，长缓存，预收集文件  
+    # STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    # 使用宽松模式，忽略缺失的source map文件
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+    WHITENOISE_USE_FINDERS = False  # 生产环境强制使用collectstatic
+    WHITENOISE_MAX_AGE = 31536000  # 1年缓存
+    WHITENOISE_AUTOREFRESH = False  # 生产环境禁用自动刷新
+
+# WhiteNoise 通用配置
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = [
+    'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'ico',  # 图片文件
+    'zip', 'gz', 'tgz', 'bz2', 'tbz', 'xz', 'br',      # 已压缩文件
+    'woff', 'woff2', 'ttf', 'eot'                        # 字体文件
+]
+# 移除错误的配置项 - WhiteNoise会使用默认的头部处理函数
 
 # 扩展django admin里users字段用到，指定了sql/models.py里的class users
 AUTH_USER_MODEL = "sql.Users"

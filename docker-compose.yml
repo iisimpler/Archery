@@ -9,7 +9,7 @@ services:
       - "./docker/config.toml:/etc/config.toml"
 
   archery:
-    image: iisimpler/archery:v1.3.0
+    image: iisimpler/archery:v1.12.0
     container_name: archery
     restart: always
     depends_on:
@@ -17,10 +17,10 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - .env:/opt/archery/.env
+      - .env_docker:/opt/archery/.env
       - "./logs:/opt/archery/logs"
+      - "./downloads:/opt/archery/downloads"
 #      - "./config:/opt/archery/conf"
-#      - "./downloads:/opt/archery/downloads"
 #      - "./keys:/opt/archery/keys"
     environment:
       - GUNICORN_WORKERS=4

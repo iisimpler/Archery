@@ -32,8 +32,7 @@ echo "my2sql安装完成"
 
 # 安装MongoDB客户端
 echo "安装MongoDB客户端..."
-curl -L -q -o mongodb-linux-x86_64-rhel70-3.6.20.tgz \
-https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.6.20.tgz
+curl -L -q -o mongodb-linux-x86_64-rhel70-3.6.20.tgz https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.6.20.tgz
 tar -xf mongodb-linux-x86_64-rhel70-3.6.20.tgz
 mv mongodb-linux-x86_64-rhel70-3.6.20/bin/mongo /usr/local/bin/
 chmod +x /usr/local/bin/mongo
@@ -44,8 +43,7 @@ echo "MongoDB客户端安装完成"
 echo "安装Oracle客户端..."
 mkdir -p /opt/oracle
 cd /opt/oracle
-curl -q -L -o oracle-install.zip \
-https://download.oracle.com/otn_software/linux/instantclient/1921000/instantclient-basic-linux.x64-19.21.0.0.0dbru.zip
+curl -q -L -o oracle-install.zip https://download.oracle.com/otn_software/linux/instantclient/1921000/instantclient-basic-linux.x64-19.21.0.0.0dbru.zip
 unzip oracle-install.zip
 echo "/opt/oracle/instantclient_19_21" > /etc/ld.so.conf.d/oracle-instantclient.conf
 ldconfig

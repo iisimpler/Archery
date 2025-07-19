@@ -112,6 +112,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl1.1 \
     libffi7 \
     libmariadb3 \
+    libglib2.0-0 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -205,7 +206,7 @@ COPY . /opt/archery/
 EXPOSE 8888
 
 # 创建配置文件挂载点
-VOLUME ["/opt/archery/conf", "/opt/archery/logs"]
+VOLUME ["/opt/archery/conf", "/opt/archery/logs", "/opt/archery/downloads", "/opt/archery/docs"]
 
 # 设置健康检查（调整为gunicorn端口）
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \

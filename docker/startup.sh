@@ -23,8 +23,8 @@ echo "4. 启动Supervisor管理的异步任务队列"
 
 echo "5. 启动Gunicorn应用服务器"
 echo "   容器监听端口: 8888"
-echo "   请配置外部Nginx反向代理到此端口"
-echo "   健康检查: curl -f http://container:8888/"
+echo "   静态文件服务: WhiteNoise中间件自动处理"
+echo "   访问地址: http://localhost:8888"
 
 exec gunicorn -w ${GUNICORN_WORKERS} -b ${GUNICORN_BIND} --timeout ${GUNICORN_TIMEOUT} archery.wsgi:application
 
